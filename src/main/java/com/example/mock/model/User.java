@@ -1,5 +1,6 @@
-package com.example.mock;
+package com.example.mock.model;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +9,9 @@ import java.time.format.DateTimeFormatter;
 
 @Getter
 public class User {
+    @NotBlank
     private final String login;
+    @NotBlank
     private final String password;
     @Setter
     private String date;

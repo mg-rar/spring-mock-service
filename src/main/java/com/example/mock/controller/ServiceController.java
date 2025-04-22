@@ -1,5 +1,6 @@
-package com.example.mock;
+package com.example.mock.controller;
 
+import com.example.mock.model.User;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,13 +26,13 @@ public class ServiceController {
     }
 
     @GetMapping("/get")
-    public String getMethod() {
+    public ResponseEntity<String> getMethod() {
         delay();
-        return "{\"login\":\"Login1\",\"status\":\"ok\"}";
+        return new ResponseEntity<>("{\"login\":\"Login1\",\"status\":\"ok\"}", HttpStatus.OK);
     }
 
     @PostMapping(value = "/post", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> postMethod(@Valid @RequestBody Request request) {
+    public ResponseEntity<User> postMethod(@Valid @RequestBody User request) {
         delay();
 
         User user = new User(request.getLogin(), request.getPassword());
