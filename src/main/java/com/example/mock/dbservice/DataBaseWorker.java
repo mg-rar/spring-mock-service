@@ -7,7 +7,7 @@ import java.util.NoSuchElementException;
 
 public class DataBaseWorker {
 
-    private static final String URL = "jdbc:postgresql://localhost:5432/users_db";
+    private static final String URL = "jdbc:postgresql://postgres/users_db";
     private static final String USER = "postgres";
     private static final String PASSWORD = "pwd";
 
