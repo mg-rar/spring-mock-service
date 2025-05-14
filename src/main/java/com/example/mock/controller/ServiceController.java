@@ -1,8 +1,10 @@
 package com.example.mock.controller;
 
 import com.example.mock.dbservice.DataBaseWorker;
+import com.example.mock.fileservice.FileWorker;
 import com.example.mock.model.User;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +12,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.NoSuchElementException;
@@ -17,8 +20,12 @@ import java.util.Random;
 
 @RestController
 public class ServiceController {
+    @Autowired
+    private DataBaseWorker dataBaseWorker;
+    @Autowired
+    private FileWorker fileWorker;
+
     private final Random random = new Random();
-    private final DataBaseWorker dataBaseWorker = new DataBaseWorker();
 
     private void delay() {
         try {
@@ -34,11 +41,24 @@ public class ServiceController {
         delay();
         try {
             User user = dataBaseWorker.selectUserByLogin(login);
+            fileWorker.writeUserToFile(user);
             return new ResponseEntity<>(user, HttpStatus.OK);
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found", e);
         } catch (SQLException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Database error", e);
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while writing the file", e);
+        }
+    }
+
+
+    @GetMapping("/random")
+    public ResponseEntity<String> getRandomUser() {
+        try {
+            return new ResponseEntity<>(fileWorker.readRandomLineFromFile(), HttpStatus.OK);
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while reading the file", e);
         }
     }
 

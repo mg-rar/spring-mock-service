@@ -1,54 +1,61 @@
 package com.example.mock.dbservice;
 
 import com.example.mock.model.User;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.sql.*;
 import java.util.NoSuchElementException;
 
+@Service
 public class DataBaseWorker {
 
-    private static final String URL = "jdbc:postgresql://postgres/users_db";
-    private static final String USER = "postgres";
-    private static final String PASSWORD = "pwd";
+    @Value("${spring.datasource.url}")
+    private String url;
+
+    @Value("${spring.datasource.username}")
+    private String username;
+
+    @Value("${spring.datasource.password}")
+    private String password;
 
     public User selectUserByLogin(String login) throws SQLException, NoSuchElementException {
         String query = "SELECT users.login, users.password, users.date, user_emails.email " +
                 "FROM users " +
                 "JOIN user_emails ON users.login = user_emails.login " +
                 "WHERE users.login = ?";
+        ResultSet resultSet = null;
 
-        User user = new User();
-
-        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+        try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
             preparedStatement.setString(1, login);
+            resultSet = preparedStatement.executeQuery();
 
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-
-                if (!resultSet.next()) {
-                    throw new NoSuchElementException("User with login '" + login + "' not found");
-                }
-
-                user.setLogin(resultSet.getString("login"));
-                user.setPassword(resultSet.getString("password"));
-                user.setDate(resultSet.getDate("date"));
-                user.setEmail(resultSet.getString("email"));
-
+            if (!resultSet.next()) {
+                throw new NoSuchElementException("User with login '" + login + "' not found");
             }
+
+            return new User(
+                    resultSet.getString("login"),
+                    resultSet.getString("password"),
+                    resultSet.getString("email"),
+                    resultSet.getDate("date")
+            );
 
         } catch (SQLException e) {
             throw new SQLException("Error while fetching user with login '" + login + "': " + e.getMessage(), e);
+        } finally {
+            if (resultSet != null)
+                resultSet.close();
         }
-
-        return user;
     }
 
     public int insertUser(User user) throws SQLException {
         final String sql = "INSERT INTO users (login, password, date) VALUES (?, ?, ?);\n" +
                 "INSERT INTO user_emails (login, email) VALUES (?, ?)";
 
-        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+        try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
             connection.setAutoCommit(false);

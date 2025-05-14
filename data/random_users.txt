@@ -1,0 +1,10 @@
+{"login":"random-user21","password":"password36","email":"random-user29@example.com","date":"2025-05-14"}
+{"login":"random-user19","password":"password54","email":"random-user70@example.com","date":"2025-05-14"}
+{"login":"random-user67","password":"password89","email":"random-user84@example.com","date":"2025-05-14"}
+{"login":"random-user88","password":"password70","email":"random-user53@example.com","date":"2025-05-14"}
+{"login":"random-user18","password":"password88","email":"random-user18@example.com","date":"2025-05-14"}
+{"login":"random-user34","password":"password82","email":"random-user45@example.com","date":"2025-05-14"}
+{"login":"random-user48","password":"password25","email":"random-user18@example.com","date":"2025-05-14"}
+{"login":"random-user59","password":"password37","email":"random-user50@example.com","date":"2025-05-14"}
+{"login":"random-user6","password":"password19","email":"random-user15@example.com","date":"2025-05-14"}
+{"login":"random-user39","password":"password96","email":"random-user39@example.com","date":"2025-05-14"}
